@@ -5,11 +5,15 @@ from numbers import Number
 import numbers
 import string
 import urllib2
+import thread
+from itertools import repeat
 
 '''
  多线程表单提交
 '''
 
+config_repeat = 10 
+config_thread = 10
 
 url = ''
 kv_map = dict()
@@ -112,6 +116,26 @@ def eachMap(mapdef):
     txt.insert('0.0', pre_text)
     return
 
+def thread_callback(req, repeat):
+    
+    for _i in range(repeat) :
+    
+        fp = urllib2.urlopen(req) 
+        print fp.read() 
+        pass
+    
+    return
+
+def mu_thr_go(req):
+    
+    for _i in range(config_thread) :
+        thread.start_new_thread(thread_callback, tuple(), dict(req=req, repeat=config_repeat))
+        pass
+    
+    return
+
+
+
 def doPost():
     param_str = ''
     
@@ -128,8 +152,11 @@ def doPost():
     req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36')
     req.add_header('Uthing-Data', 'ios; 4.4.2; 4.1.1')
     
-    fp = urllib2.urlopen(req) 
-    print fp.read() 
+    #fp = urllib2.urlopen(req) 
+    #print fp.read() 
+    
+    mu_thr_go(req)
+    
     return
 
 
