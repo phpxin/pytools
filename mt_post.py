@@ -4,6 +4,7 @@ import Tkinter
 from numbers import Number
 import numbers
 import string
+import urllib2
 
 '''
  多线程表单提交
@@ -50,7 +51,7 @@ input_area_width = 70
 win_size = '600x600'
 
 ui = Tkinter.Tk()
-ui.title("hello tk")
+ui.title("GO POST >")
 ui.geometry(win_size)
 
 #第一行
@@ -111,6 +112,27 @@ def eachMap(mapdef):
     txt.insert('0.0', pre_text)
     return
 
+def doPost():
+    param_str = ''
+    
+    if len(kv_map) > 0 :
+        keys = dict.iterkeys(kv_map)
+        for k in keys :
+            param_str += k+"="+kv_map[k]+"&"
+            pass
+        pass
+    
+    param_str = tools_trim(param_str, '&')
+    
+    req = urllib2.Request(url, param_str)
+    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36')
+    req.add_header('Uthing-Data', 'ios; 4.4.2; 4.1.1')
+    
+    fp = urllib2.urlopen(req) 
+    print fp.read() 
+    return
+
+
 def btnOnAddParam():
     global txt
     global inputkey
@@ -132,6 +154,7 @@ def btnOnExec():
     url = url_ta.get('0.0', Tkinter.END)
     url = tools_trim(url, '\n\t ')
     print url
+    doPost()
     return
 
 def btnOnClean():
@@ -148,11 +171,11 @@ btn_add.grid(row=0, column=0, padx=2)
 #btn.pack()
 #btn.grid(row=win_row, column=0)
 
-btn_clean = Tkinter.Button(btn_frame, text='清空post参数', command=btnOnClean)
+btn_clean = Tkinter.Button(btn_frame, text='清空POST参数', command=btnOnClean)
 btn_clean.grid(row=0, column=1, padx=2)
 
 btn_post = Tkinter.Button(btn_frame, text='执行', command=btnOnExec )
-btn_post.grid(row=0, column=2, padx=2)
+btn_post.grid(row=0, column=2, padx=2, ipadx=20)
 #btn2.pack()
 #btn2.grid(row=win_row, column=1)
 
