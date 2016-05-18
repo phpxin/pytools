@@ -6,6 +6,7 @@ from startdemo.items import QyCountrysItem
 '''
 
 穷游国家列表解析 http://place.qyer.com/
+scrapy crawl qycountrys -s LOG_LEVEL=INFO
 
 '''
 
@@ -26,7 +27,7 @@ class QycountrysSpider(BaseSpider):
     config = {
           'user':'root',
           'password':'lixinxin',
-          'host':'127.0.0.1',
+          'host':'SpiderDb',
           'database':'qy_spider'
           }
     

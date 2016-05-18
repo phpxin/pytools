@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import redis
 
-redisdb = redis.Redis('192.168.3.123')
+redisdb = redis.Redis('SpiderDb')
 
 # 集合操作
 

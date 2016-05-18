@@ -12,8 +12,7 @@ from _codecs import decode
 
 import sys
 reload(sys)
-#sys.setdefaultencoding('utf-8')
-#print sys.getdefaultencoding()
+
 sys.setdefaultencoding('utf-8')
 
 
@@ -27,9 +26,6 @@ class QycitysSpider(BaseSpider):
     name = "qycitys"
     allowed_domains = ["qyer.com","localhost"]
     start_urls = [
-        #"http://place.qyer.com/antarctica/citylist-0-0-1/",        #test
-        #"http://place.qyer.com/mauritius/citylist-0-0-1/",        #test
-        "http://place.qyer.com/iran/citylist-0-0-1/"
     ]
     
     qy_host = 'http://place.qyer.com'
@@ -42,7 +38,6 @@ class QycitysSpider(BaseSpider):
           'user':'root',
           'password':'lixinxin',
           'host':'SpiderDb',
-          #'host':'localhost',
           'database':'qy_spider'
           }
     
@@ -50,8 +45,6 @@ class QycitysSpider(BaseSpider):
     
     def __init__(self, continent=None):
         
-        #'Asialist', 'Europelist', 'Africalist', 'NorthAmericalist', 'SouthAmericalist', 'Oceanialist', 'Antarcticalist'
-        #print continent
         
         # 涉及到线程安全的初始化，需要放到这里，比如redis需要用大洲来标识使用哪个集合
         self.current_continent = continent;
@@ -61,16 +54,15 @@ class QycitysSpider(BaseSpider):
         # 创建mysql连接
         self.cnx = mysql.connector.connect(**self.config)
         self.cnx.cursor().execute("set names utf8")
-        xcursor = self.cnx.cursor()
         
         # 查询大洲下国家
+        xcursor = self.cnx.cursor()
         xcursor.execute("select id,url,sign,continent,en,name from countrys where continent='"+self.current_continent+"' and status=0") 
         for (id,url,sign,continent,en,name) in xcursor:
-            #print(id,url,sign,continent,en,name)
-            #self.start_urls.append(url.strip('/') + '/citylist-0-0-1/')
+            self.start_urls.append(url.strip('/') + '/citylist-0-0-1/')
             pass
-        
         xcursor.close()
+        
         
         # 创建 redis 连接
         self.redisdb = redis.Redis('SpiderDb')
@@ -78,24 +70,33 @@ class QycitysSpider(BaseSpider):
         self.redisdb.delete(self.set_url_sign_citys)
         self.redisdb.delete(self.set_url_sign_countrys)
         
+        #初始化已存在city url
+        xcursor = self.cnx.cursor()
+        xcursor.execute("select sign from citys where continent='"+self.current_continent+"'") 
+        for (sign) in xcursor:
+            self.redisdb.sadd(self.set_url_sign_citys, sign)
+            pass
+        xcursor.close()
+        
         pass
 
     def parse(self, response):
         
         referer = response.url
         self.log("exec country url is "+referer)
+        
+        print "exec country url is "+referer
 
         ''' 处理分页 '''
         
         hrefs = response.css('a.ui_page_item').xpath('@href').extract()
-        #print  'a'      
+        
         # 有值 [u'/algeria/citylist-0-0-1/', u'/algeria/citylist-0-0-2/', u'/algeria/citylist-0-0-2/']
         # 无值 []
         if len(hrefs) > 0 :
             for href in hrefs :
                 self.appendToUrls(self.qy_host + href)
                 
-        #print self.start_urls
         
         ''' 处理城市列表 '''
         
@@ -104,26 +105,26 @@ class QycitysSpider(BaseSpider):
         for _city_selector  in cityurls_selector:
             _data = dict()
             _img = _city_selector.css('p.pics img').xpath('@src').extract()
-            _name =  _city_selector.css('h3.title a').xpath('text()').extract()
+            _name =  _city_selector.css('h3.title a').xpath('text()[1]').extract()
             _en = _city_selector.css('h3.title a span.en').xpath('text()').extract()
             _link = _city_selector.css('h3.title a').xpath('@href').extract()
             
             if len(_link)>0 and len(_name)>0 :
-                _data['img'] = _img.pop().replace("'", "\'")
-                #_data['name'] = decode(_name[0].replace("'", "\'").replace("\xa0", ""))
-                #_data['name'] = 'unknow'
-                _data['name'] = _name[0] #.replace("'", "\'").replace("\xa0", "")
-                _data['en'] = _en.pop().replace("'", "\'")
-                _data['link'] = _link.pop().replace("'", "\'")
-                _data['referer'] = referer.replace("'", "\'")
-                print _data
+                _data['img'] = _img.pop().replace("'", "\\'")
+                _data['name']  = _name.pop().replace("'", "\\'")
+                _data['en'] = _en.pop().replace("'", "\\'")
+                _data['link'] = _link.pop().replace("'", "\\'")
+                _data['referer'] = referer.replace("'", "\\'")
+
                 #写数据库
                 clist.append(_data)
         
         if len(clist) > 0 :
             self.process_clist(clist)
-        #print clist
+        
         clist = []  # reset
+        
+        print referer + ' complete !'
              
     def process_clist(self, clist):
         
@@ -150,9 +151,8 @@ class QycitysSpider(BaseSpider):
         xcursor = self.cnx.cursor()
         if len(self.values) > 0 :
             _values = ",".join(self.values)
-            flag = xcursor.execute("insert into citys(url, sign, continent, createtime, en, status, name, referer, img) values"+_values)
-            print "insert into citys(url, sign, continent, createtime, en, status, name, referer, img) values"+_values
-            print flag
+            
+            xcursor.execute("insert into citys(url, sign, continent, createtime, en, status, name, referer, img) values"+_values)
             self.cnx.commit()
             pass
         xcursor.close()
