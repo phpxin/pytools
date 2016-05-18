@@ -2,7 +2,9 @@
 import time
 import datetime
 
-print time.strftime('%Y-%m-%d')
+print time.strftime('%Y-%m-%d %H:%M:%S')
+
+print time.strftime('%m%d')
 
 
 dt = datetime.datetime(2006, 6, 14) 

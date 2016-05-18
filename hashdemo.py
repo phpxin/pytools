@@ -1,6 +1,22 @@
 # -*- coding: utf-8 -*-
 import hashlib
 
+
+m2 = hashlib.md5()
+m2.update('lx')         
+print m2.hexdigest()
+
+m2.update('lb')         #每次update 会把这个字符串追加到需要生成的字符串末尾，所以hashlib.md5()每次必须重新声明
+print m2.hexdigest()
+
+m3 = hashlib.md5()
+m3.update('lb')
+print m3.hexdigest()
+
+print hashlib.md5().update('lb').hexdigest()
+
+exit()
+
 persons = ['lx', 'lucy', 'jack']
 
 persons_hash = []
