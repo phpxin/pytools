@@ -107,12 +107,12 @@ class QycitysSpider(BaseSpider):
             _link = _city_selector.css('h3.title a').xpath('@href').extract()
             
             if len(_link)>0 and len(_name)>0 :
-                _data['img'] = _img.pop()
-                _data['name'] = decode(_name[0])
+                _data['img'] = _img.pop().replace("'", "\'")
+                _data['name'] = decode(_name[0]).replace("'", "\'")
                 #_data['name'] = 'unknow'
-                _data['en'] = _en.pop()
-                _data['link'] = _link.pop()
-                _data['referer'] = referer
+                _data['en'] = _en.pop().replace("'", "\'")
+                _data['link'] = _link.pop().replace("'", "\'")
+                _data['referer'] = referer.replace("'", "\'")
                 print _data
                 #写数据库
                 clist.append(_data)
@@ -134,7 +134,8 @@ class QycitysSpider(BaseSpider):
             self.redisdb.sadd(self.set_url_sign_citys, hashstr)
             
             now = int(time.time())
-            self.values.append("('"+i['link']+"', '"+hashstr+"', '"+self.current_continent+"', "+('%d' %now)+", '"+i['en']+"', 0, '"+i['name']+"', '"+i['referer']+"', '"+i['img']+"')")
+            _continent = self.current_continent.replace("'", "\'")
+            self.values.append("('"+i['link']+"', '"+hashstr+"', '"+_continent+"', "+('%d' %now)+", '"+i['en']+"', 0, '"+i['name']+"', '"+i['referer']+"', '"+i['img']+"')")
             
             counter_i = counter_i+1
             if counter_i % 100 == 0 :
