@@ -29,6 +29,7 @@ class QycitysSpider(BaseSpider):
     start_urls = [
         #"http://place.qyer.com/antarctica/citylist-0-0-1/",        #test
         #"http://place.qyer.com/mauritius/citylist-0-0-1/",        #test
+        "http://place.qyer.com/iran/citylist-0-0-1/"
     ]
     
     qy_host = 'http://place.qyer.com'
@@ -66,7 +67,8 @@ class QycitysSpider(BaseSpider):
         xcursor.execute("select id,url,sign,continent,en,name from countrys where continent='"+self.current_continent+"' and status=0") 
         for (id,url,sign,continent,en,name) in xcursor:
             #print(id,url,sign,continent,en,name)
-            self.start_urls.append(url.strip('/') + '/citylist-0-0-1/')
+            #self.start_urls.append(url.strip('/') + '/citylist-0-0-1/')
+            pass
         
         xcursor.close()
         
@@ -108,8 +110,9 @@ class QycitysSpider(BaseSpider):
             
             if len(_link)>0 and len(_name)>0 :
                 _data['img'] = _img.pop().replace("'", "\'")
-                _data['name'] = decode(_name[0]).replace("'", "\'")
+                #_data['name'] = decode(_name[0].replace("'", "\'").replace("\xa0", ""))
                 #_data['name'] = 'unknow'
+                _data['name'] = _name[0] #.replace("'", "\'").replace("\xa0", "")
                 _data['en'] = _en.pop().replace("'", "\'")
                 _data['link'] = _link.pop().replace("'", "\'")
                 _data['referer'] = referer.replace("'", "\'")
@@ -148,7 +151,7 @@ class QycitysSpider(BaseSpider):
         if len(self.values) > 0 :
             _values = ",".join(self.values)
             flag = xcursor.execute("insert into citys(url, sign, continent, createtime, en, status, name, referer, img) values"+_values)
-            #print "insert into citys(url, sign, continent, createtime, en, status, name, referer, img) values"+_values
+            print "insert into citys(url, sign, continent, createtime, en, status, name, referer, img) values"+_values
             print flag
             self.cnx.commit()
             pass

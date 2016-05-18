@@ -1,6 +1,15 @@
 # -*- coding: utf-8 -*-
 from _codecs import decode
 
+
+b = '\u8d5e\u8a79\xa0\xa0'
+u  = unicode(b)
+
+print u
+
+exit()
+
+
 a = "aaaa'aaaaa"
 
 a = a.replace("'", "\'")
