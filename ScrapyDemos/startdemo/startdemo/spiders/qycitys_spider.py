@@ -27,7 +27,7 @@ class QycitysSpider(BaseSpider):
     config = {
           'user':'root',
           'password':'lixinxin',
-          'host':'127.0.0.1',
+          'host':'SpiderDb',
           'database':'qy_spider'
           }
     
