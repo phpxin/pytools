@@ -22,6 +22,8 @@ Cookie: _guid=808cd39f-041d-f9b4-2787-fe51360d00ed; isnew=1463377186956; isDoLog
 
 '''
 
+
+
 conn = httplib.HTTPConnection('localhost')
 conn.request('GET', '/info.php', '', {"User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36"})  #, body, headers
 

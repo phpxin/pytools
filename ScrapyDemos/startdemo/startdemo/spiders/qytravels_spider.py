@@ -70,13 +70,15 @@ class QytravelsSpider(BaseSpider):
         self.redisdb.delete(self.set_url_sign_citys)
         self.redisdb.delete(self.set_url_sign_travels)
         
-        #初始化已存在city url
+        #初始化已存在目的地列表 url
         xcursor = self.cnx.cursor()
         xcursor.execute("select sign from travels where continent='"+self.current_continent+"'") 
         for (sign) in xcursor:
             self.redisdb.sadd(self.set_url_sign_travels, sign)
             pass
         xcursor.close()
+        
+        #初始化已经采集的列表地址
         
         pass
 

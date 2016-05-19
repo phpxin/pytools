@@ -109,6 +109,8 @@ class QycitysSpider(BaseSpider):
             _name =  _city_selector.css('h3.title a').xpath('text()[1]').extract()
             _en = _city_selector.css('h3.title a span.en').xpath('text()').extract()
             _link = _city_selector.css('h3.title a').xpath('@href').extract()
+            _qy_type = _city_selector.css('p.addPlanBtn').xpath('@data-type').extract()
+            _qy_pid = _city_selector.css('p.addPlanBtn').xpath('@data-pid').extract()
             
             if len(_link)>0 and len(_name)>0 :
                 _data['img'] = _img.pop().replace("'", "\\'")
@@ -116,6 +118,8 @@ class QycitysSpider(BaseSpider):
                 _data['en'] = _en.pop().replace("'", "\\'")
                 _data['link'] = _link.pop().replace("'", "\\'")
                 _data['referer'] = referer.replace("'", "\\'")
+                _data['qy_type'] = _qy_type.pop().replace("'", "\\'")
+                _data['qy_pid'] = _qy_pid.pop().replace("'", "\\'")
 
                 #写数据库
                 clist.append(_data)
@@ -140,7 +144,7 @@ class QycitysSpider(BaseSpider):
             
             now = int(time.time())
             _continent = self.current_continent.replace("'", "\'")
-            self.values.append("('"+i['link']+"', '"+hashstr+"', '"+_continent+"', "+('%d' %now)+", '"+i['en']+"', 0, '"+i['name']+"', '"+i['referer']+"', '"+i['img']+"')")
+            self.values.append("('"+i['link']+"', '"+hashstr+"', '"+_continent+"', "+('%d' %now)+", '"+i['en']+"', 0, '"+i['name']+"', '"+i['referer']+"', '"+i['img']+"', '"+i['qy_type']+"', "+i['qy_pid']+")")
             
             counter_i = counter_i+1
             if counter_i % 100 == 0 :
@@ -153,7 +157,7 @@ class QycitysSpider(BaseSpider):
         if len(self.values) > 0 :
             _values = ",".join(self.values)
             
-            xcursor.execute("insert into citys(url, sign, continent, createtime, en, status, name, referer, img) values"+_values)
+            xcursor.execute("insert into citys(url, sign, continent, createtime, en, status, name, referer, img, qy_type, qy_pid) values"+_values)
             self.cnx.commit()
             pass
         xcursor.close()
