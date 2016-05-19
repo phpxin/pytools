@@ -1,5 +1,18 @@
 # -*- coding: utf-8 -*-
 from _codecs import decode
+urls = []
+
+urls.append( 'http://place.qyer.com/seoul/alltravel/?page=100' )
+urls.append( 'http://place.qyer.com/seoul/alltravel/' )
+urls.append( 'http://place.qyer.com/seoul/alltravel' )
+
+for url in urls :
+    if url.endswith('alltravel/') or  url.endswith('alltravel') :
+        print 'True : ' + url
+    else:
+        print 'Failed : ' + url
+
+exit()
 
 
 b = '\u8d5e\u8a79\xa0\xa0'
