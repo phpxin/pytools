@@ -47,7 +47,8 @@ class QycountrysSpider(BaseSpider):
             
             #print asia_sel
             
-            _item = response.selector.xpath('//*[@id="'+_continent+'"]/div/ul/li/a')    # 必须按照层级写，遵守DOM xpath标准
+            #_item = response.selector.xpath('//*[@id="'+_continent+'"]/div/ul/li/a')    # 必须按照层级写，遵守DOM xpath标准
+            _item = response.css('#'+_continent+' ul li a')
             #print _item
             for a_sel_i in _item:
                 href = a_sel_i.xpath('@href').extract()

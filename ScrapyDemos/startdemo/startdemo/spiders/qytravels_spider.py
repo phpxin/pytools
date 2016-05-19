@@ -22,8 +22,8 @@ sys.setdefaultencoding('utf-8')
      参数 Africalist, Asialist, Europelist, NorthAmericalist, Oceanialist, SouthAmericalist
 '''
 
-class QycitysSpider(BaseSpider):
-    name = "qycitys"
+class QytravelsSpider(BaseSpider):
+    name = "qytravels"
     allowed_domains = ["qyer.com","localhost"]
     start_urls = [
     ]
@@ -48,18 +48,18 @@ class QycitysSpider(BaseSpider):
         
         # 涉及到线程安全的初始化，需要放到这里，比如redis需要用大洲来标识使用哪个集合
         self.current_continent = continent;
-        self.set_url_sign_countrys = 'set_url_sign_countrys_' + continent #redis 集合，国家列表 url 指纹    md5("http://place.qyer.com/antarctica/citylist-0-0-1/")
         self.set_url_sign_citys = 'set_url_sign_citys_' + continent       #redis 集合 已获取的城市指纹，用来去重   md5("http://place.qyer.com/pyongyang/")
+        self.set_url_sign_travels = 'set_url_sign_travels_' + continent #redis 集合，目的地列表 url 指纹    md5("http://place.qyer.com/manama/alltravel/")
         
         # 创建mysql连接
         self.cnx = mysql.connector.connect(**self.config)
         self.cnx.cursor().execute("set names utf8")
-        
         # 查询大洲下国家
+        
         xcursor = self.cnx.cursor()
-        xcursor.execute("select id,url,sign,continent,en,name from countrys where continent='"+self.current_continent+"' and status=0 ") 
+        xcursor.execute("select id,url,sign,continent,en,name from citys where continent='"+self.current_continent+"' and status=0") 
         for (id,url,sign,continent,en,name) in xcursor:
-            self.start_urls.append(url.strip('/') + '/citylist-0-0-1/')
+            self.start_urls.append(url.strip('/') + '/alltravel/')
             pass
         xcursor.close()
         
@@ -68,13 +68,13 @@ class QycitysSpider(BaseSpider):
         self.redisdb = redis.Redis('SpiderDb')
         # 初始化内存数据库
         self.redisdb.delete(self.set_url_sign_citys)
-        self.redisdb.delete(self.set_url_sign_countrys)
+        self.redisdb.delete(self.set_url_sign_travels)
         
         #初始化已存在city url
         xcursor = self.cnx.cursor()
-        xcursor.execute("select sign from citys where continent='"+self.current_continent+"'") 
+        xcursor.execute("select sign from travels where continent='"+self.current_continent+"'") 
         for (sign) in xcursor:
-            self.redisdb.sadd(self.set_url_sign_citys, sign)
+            self.redisdb.sadd(self.set_url_sign_travels, sign)
             pass
         xcursor.close()
         
@@ -82,9 +82,8 @@ class QycitysSpider(BaseSpider):
 
     def parse(self, response):
         
-        
         referer = response.url
-        self.log("exec country url is "+referer+" http_code is "+('%d' %response.status))
+        self.log("exec country url is "+referer)
         
         print "exec country url is "+referer
 
