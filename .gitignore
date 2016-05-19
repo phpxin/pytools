@@ -3,3 +3,4 @@
 .project
 .pydevproject
 ScrapyDemos/startdemo/logs/*
+.pyc
