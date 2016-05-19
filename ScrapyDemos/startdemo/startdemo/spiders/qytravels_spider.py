@@ -73,7 +73,7 @@ class QytravelsSpider(BaseSpider):
         
         # 查询大洲下国家
         xcursor = self.cnx.cursor()
-        xcursor.execute("select id,url,sign,continent,en,name from citys where continent='"+self.current_continent+"' and status=0 limit 1") 
+        xcursor.execute("select id,url,sign,continent,en,name from citys where continent='"+self.current_continent+"' and status=0 ") 
         for (id,url,sign,continent,en,name) in xcursor:
             #self.start_urls.append(url.strip('/') + '/alltravel/')
             self.appendToUrls(url.strip('/') + '/alltravel/')
