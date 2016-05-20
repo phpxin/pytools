@@ -27,7 +27,7 @@ class QytravelsSpider(BaseSpider):
     name = "qytravels"
     allowed_domains = ["qyer.com","localhost"]
     start_urls = [
-                  'http://place.qyer.com/tabriz/alltravel/'
+                  #'http://place.qyer.com/tabriz/alltravel/'
     ]
     
     qy_host = 'http://place.qyer.com'
@@ -74,7 +74,7 @@ class QytravelsSpider(BaseSpider):
         
         # 查询大洲下国家
         xcursor = self.cnx.cursor()
-        xcursor.execute("select id,url,sign,continent,en,name from citys where continent='"+self.current_continent+"' and status=0 limit 1") 
+        xcursor.execute("select id,url,sign,continent,en,name from citys where continent='"+self.current_continent+"' and status=0") 
         for (id,url,sign,continent,en,name) in xcursor:
             #self.start_urls.append(url.strip('/') + '/alltravel/')
             self.appendToUrls(url.strip('/') + '/alltravel/')
@@ -131,10 +131,14 @@ class QytravelsSpider(BaseSpider):
             _name =  _poi_selector.css('h3.title a').xpath('text()[1]').extract()
             _en = _poi_selector.css('h3.title a span').xpath('text()').extract()
             _link = _poi_selector.css('h3.title a').xpath('@href').extract()
+            
             if len(_link)>0 and len(_name)>0 :
                 _data['link'] = _link.pop().replace("'", "\\'").strip()
                 _data['name']  = _name.pop().replace("'", "\\'").strip()
                 _data['referer'] = referer.replace("'", "\\'").strip()
+                _data['img'] = ''
+                _data['en'] = ''
+                
                 if len(_img) > 0:
                     _data['img'] = _img.pop().replace("'", "\\'").strip()
                 if len(_en) > 0:
