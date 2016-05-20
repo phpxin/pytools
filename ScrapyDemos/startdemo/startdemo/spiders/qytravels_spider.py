@@ -207,7 +207,7 @@ class QytravelsSpider(BaseSpider):
         
         isconn = self.cnx.is_connected()
         if not isconn :
-            log('connection is lose')
+            self.log('connection is lose')
             print 'connection is lose'
             self.connect_mysql()
             

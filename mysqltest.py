@@ -13,9 +13,29 @@ config = {
 
 # 创建mysql连接
 cnx = mysql.connector.connect(**config)
-cnx.cursor().execute("set names utf8")
+
+xcur = cnx.cursor(dictionary=True) 
+
+xcur.execute("set names utf8")
 
 print '1111111111111111111'
+
+xcur.execute("select * from demo where id=1")
+
+info = xcur.fetchone()
+
+if info :
+    print info
+    for key in xcur.column_names:
+        print key , ' = ' , info[key]
+else:
+    print 'not found'
+
+
+#xcur.close()
+cnx.close()
+
+exit()
 
 
 '''

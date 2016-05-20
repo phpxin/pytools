@@ -3,7 +3,9 @@
 from selenium import webdriver
 import time
 
-driver = webdriver.PhantomJS(executable_path='')
+#driver = webdriver.PhantomJS()
+driver = webdriver.Firefox()
 driver.get("http://localhost/Demos/test2.php") 
 
-print driver.
+#获取正文
+print driver.find_element_by_tag_name('body').text
