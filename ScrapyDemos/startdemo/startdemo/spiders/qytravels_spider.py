@@ -60,8 +60,9 @@ class QytravelsSpider(BaseSpider):
         self.redisdb.delete(self.set_url_sign_travels)
         
         # 创建mysql连接
-        self.cnx = mysql.connector.connect(**self.config)
-        self.cnx.cursor().execute("set names utf8")
+        #self.cnx = mysql.connector.connect(**self.config)
+        #self.cnx.cursor().execute("set names utf8")
+        self.connect_mysql()
         
         #初始化已经采集的列表地址
         xcursor = self.cnx.cursor()
@@ -195,8 +196,22 @@ class QytravelsSpider(BaseSpider):
                 self.flush_data()
             
         self.flush_data()
+        
+    def connect_mysql(self):
+        print 'connection to ' + self.config['host']
+        self.log('connection to ' + self.config['host'])
+        self.cnx = mysql.connector.connect(**self.config)
+        self.cnx.cursor().execute("set names utf8")
     
     def flush_data(self):
+        
+        isconn = self.cnx.is_connected()
+        if not isconn :
+            log('connection is lose')
+            print 'connection is lose'
+            self.connect_mysql()
+            
+        
         xcursor = self.cnx.cursor()
         if len(self.values) > 0 :
             _values = ",".join(self.values)
