@@ -18,8 +18,14 @@ xcur = cnx.cursor(dictionary=True)
 
 xcur.execute("set names utf8")
 
+try:
+    xcur.execute("insert into demo(title,content,sort) values('1111111', 'if'b', 1)");
+except mysql.connector.errors.ProgrammingError as e:
+    print 'sql error :'
+    print e
+    
 print '1111111111111111111'
-
+'''
 xcur.execute("select * from demo where id=1")
 
 info = xcur.fetchone()
@@ -34,6 +40,7 @@ else:
 
 #xcur.close()
 cnx.close()
+'''
 
 exit()
 
