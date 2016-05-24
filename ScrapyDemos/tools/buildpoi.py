@@ -178,7 +178,7 @@ def flush_data(_datalist, _idlist):
 connect_mysql()
 
 xcur = cnx.cursor()
-xcur.execute("select id,name,filepath from travels where status=1 and poi_status=0 and continent='"+continent+"' order by id asc limit 10") 
+xcur.execute("select id,name,filepath from travels where status=1 and poi_status=0 and continent='"+continent+"' order by id asc ") 
 result = xcur.fetchall()
 #print result
 print 'total : ' , len(result) , 'row '
@@ -187,7 +187,8 @@ idlist = []
 for_index = 0
 for (id,name,filepath) in result:
 
-    print 'exec ' , id , ' ' , name , ' ... '
+    #print 'exec ' , id , ' ' , name.encode('gbk') , ' ... '
+    print 'exec ' , id  , ' ... '
     
     _path = '../startdemo/'+filepath
     
@@ -209,10 +210,12 @@ for (id,name,filepath) in result:
     
     _travel_id = ('%d' %id)
     _detail = result_dict['detail'].replace("'", "")
-    _kvs = result_dict['kvs'].replace("'", "")
+    _kvs = result_dict['kvs'].replace("\\","\\\\")
     _lon = result_dict['lon'].replace("'", "")
     _lat = result_dict['lat'].replace("'", "")
     _qy_pid = ('%d' %result_dict['qy_pid'])
+    
+    #print _kvs
     
     now = int(time.time())
     _addtime = ('%d' %now)
@@ -227,7 +230,8 @@ for (id,name,filepath) in result:
         datalist = []
         idlist = []
     
-    print 'exec ' , id , ' ' , name , ' done! '
+    #print 'exec ' , id , ' ' , name , ' done! '
+    print 'exec ' , id , ' done! '
     
     pass
 
