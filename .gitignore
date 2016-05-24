@@ -5,3 +5,4 @@
 ScrapyDemos/startdemo/logs/*
 ScrapyDemos/startdemo/travel_htmls/*
 *.pyc
+ScrapyDemos/tools/logs/*

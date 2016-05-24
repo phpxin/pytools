@@ -1,5 +1,18 @@
 # -*- coding: utf-8 -*-
 
+
+a = '123'
+b = 0
+try:
+
+    b = int(a)
+except ValueError as ve:
+    print str(ve)
+
+print b
+
+exit()
+
 '''
 b = 1
 print 'b id is ', id(b) # b id is  34899544

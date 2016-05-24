@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 
+str1 = "查看地图"
+
+str1.encode('utf-8')
+
+print str1
+
+exit()
 
 val = 100
 val_str = '%d' %val 
