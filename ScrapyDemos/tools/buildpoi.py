@@ -98,7 +98,7 @@ def myParse(html):
     searchobj = location_re.search(html)
     if searchobj :
         location_pair = searchobj.groups()
-        print location_pair
+        #print location_pair
         if len(location_pair) >= 2 :
             rdict['lat'] = location_pair[0]
             rdict['lon'] = location_pair[1]
@@ -131,6 +131,7 @@ print 'now exec ' , continent , ' datas ... '
 
 cnx = None
 
+
 def connect_mysql():
     global cnx
     config = {
@@ -143,6 +144,37 @@ def connect_mysql():
     cnx = mysql.connector.connect(**config)
     cnx.cursor().execute("set names utf8")
 
+def flush_data(_datalist, _idlist):
+    global cnx
+    
+    print 'flush data is exec '
+    
+    isconn = cnx.is_connected()
+    if not isconn :
+        log('connection is lose')
+        connect_mysql()
+        
+    #xcur = cnx.cursor()
+    #xcur.execute("insert into poi(`travel_id`,`detail`,`kvs`,`addtime`,`lon`,`lat`,`qy_pid`) values()")
+        
+    
+    xcursor = cnx.cursor()
+    if len(_datalist) > 0 :
+        _values = ",".join(_datalist)
+        xcursor.execute("insert into poi(`travel_id`,`detail`,`kvs`,`addtime`,`lon`,`lat`,`qy_pid`) values"+_values)
+        cnx.commit()
+        pass
+        
+    if len(_idlist) > 0 :
+        _values = ",".join(_idlist)
+        xcursor.execute("update travels set poi_status=1 where id in("+_values+")")
+        cnx.commit()
+        pass
+        
+    xcursor.close()
+        
+    return
+
 connect_mysql()
 
 xcur = cnx.cursor()
@@ -150,7 +182,12 @@ xcur.execute("select id,name,filepath from travels where status=1 and poi_status
 result = xcur.fetchall()
 #print result
 print 'total : ' , len(result) , 'row '
+datalist = []
+idlist = []
+for_index = 0
 for (id,name,filepath) in result:
+
+    print 'exec ' , id , ' ' , name , ' ... '
     
     _path = '../startdemo/'+filepath
     
@@ -163,18 +200,37 @@ for (id,name,filepath) in result:
     
     fp = open(_path)
     html = fp.read()
-    result_dict = myParse(html)
-    print result_dict
     fp.close()
+    
+    result_dict = myParse(html)
+    
+    #print result_dict
+    #xcur.execute("insert into poi(`travel_id`,`detail`,`kvs`,`addtime`,`lon`,`lat`,`qy_pid`) values()")
+    
+    _travel_id = ('%d' %id)
+    _detail = result_dict['detail'].replace("'", "")
+    _kvs = result_dict['kvs'].replace("'", "")
+    _lon = result_dict['lon'].replace("'", "")
+    _lat = result_dict['lat'].replace("'", "")
+    _qy_pid = ('%d' %result_dict['qy_pid'])
+    
+    now = int(time.time())
+    _addtime = ('%d' %now)
+    
+    datalist.append("("+_travel_id+", '"+_detail+"', '"+_kvs+"', "+_addtime+", '"+_lon+"', '"+_lat+"', "+_qy_pid+")")
+    idlist.append(_travel_id)
+    
+    for_index = for_index+1
+    
+    if for_index % 100 == 0 :
+        flush_data(datalist, idlist)
+        datalist = []
+        idlist = []
+    
+    print 'exec ' , id , ' ' , name , ' done! '
+    
     pass
 
-
-'''
-fp = open('../startdemo/travel_htmls/demo.html')
-html = fp.read()
-#print html
-result_dict = myParse(html)
-print result_dict
-fp.close()
-
-'''
+flush_data(datalist, idlist)
+datalist = []
+idlist = []
