@@ -18,7 +18,7 @@ from _codecs import decode
      参数 Africalist, Asialist, Europelist, NorthAmericalist, Oceanialist, SouthAmericalist
 '''
 
-class QytravelsSpider(BaseSpider):
+class QydownloadSpider(BaseSpider):
     name = "qydownload"
     allowed_domains = ["qyer.com","localhost"]
     start_urls = [
