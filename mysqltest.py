@@ -4,6 +4,28 @@
 
 import mysql.connector
 from mysql.connector import connect, Connect
+
+config = {
+      'user':'root',
+      'password':'lixinxin',
+      'host':'SpiderDb',
+      'database':'qy_spider'
+      }
+cnx = mysql.connector.connect(**config)
+xcursor = cnx.cursor()
+xcursor.execute("select referer_sign from travels where continent='Asialist' limit 10") 
+for (referer_sign) in xcursor:
+    print referer_sign
+    print referer_sign[0]
+#     if len(referer_sign) > 0:
+#         self.redisdb.sadd(self.set_url_sign_citys, referer_sign[0])
+    pass
+xcursor.close()
+
+
+
+exit()
+
 config = {
       'user':'root',
       'password':'lixinxin',
