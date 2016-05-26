@@ -1,5 +1,16 @@
 # -*- coding: utf-8 -*-
 
+num = [0,1,2,3,4]
+
+print len(num)
+num.remove(1)
+
+print len(num)
+print num[1]
+
+
+exit()
+
 str1 = "查看地图"
 
 str1.encode('utf-8')
