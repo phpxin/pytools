@@ -9,6 +9,7 @@ import hashlib
 import redis
 import os
 from _codecs import decode
+from scrapy import Request
 
 import sys
 from cgi import log
@@ -75,7 +76,7 @@ class QytravelsSpider(BaseSpider):
         
         # 查询大洲下国家
         xcursor = self.cnx.cursor()
-        xcursor.execute("select id,url,sign,continent,en,name from citys where continent='"+self.current_continent+"' and status=0 and id=262 limit 1") 
+        xcursor.execute("select id,url,sign,continent,en,name from citys where continent='"+self.current_continent+"' and status=0 ") 
         for (id,url,sign,continent,en,name) in xcursor:
             #self.start_urls.append(url.strip('/') + '/alltravel/')
             self.appendToUrls(url.strip('/') + '/alltravel/')
@@ -96,16 +97,19 @@ class QytravelsSpider(BaseSpider):
     def parse(self, response):
         
         referer = response.url
+        print referer
         self.log("exec city url is "+referer)
         
         print "exec city url is "+referer
         
+        
+        reqs = []
         if referer.endswith('alltravel/') or  referer.endswith('alltravel') :
-    
+            print 'page split'
             ''' 处理分页，仅主页处理 '''
             
             pages = response.css('#poiListPage div.ui_page a').xpath('@data-page').extract()
-            
+#             print pages
             maxpage = 1
             if len(pages) > 0 :
                 for _page in pages :
@@ -114,11 +118,14 @@ class QytravelsSpider(BaseSpider):
             else:
                 self.log('city '+referer+' no page') 
                 print 'city '+referer+' no page'
-            
+            print maxpage
             if maxpage > 1 :
                 for _i in range(1, maxpage) :
                     _pn = _i+1
-                    self.appendToUrls( referer + '?page=' + ('%d' %_pn) )    # 将分页子页面添加到抓取队列
+                    _url = referer + '?page=' + ('%d' %_pn)
+                    _flag = self.appendToUrls( _url )    # 将分页子页面添加到抓取队列
+                    if _flag :
+                        reqs.append(Request(_url, self.parse))
                     pass
                 pass
         
@@ -153,6 +160,8 @@ class QytravelsSpider(BaseSpider):
         
         clist = []  # reset
         print referer + ' complete !'
+        
+        return reqs
         
     def parseInt(self, _num_str):
         
@@ -253,11 +262,12 @@ class QytravelsSpider(BaseSpider):
             pass
         else:
             if self.redisdb.sismember(self.set_url_sign_citys, sign):
-                return  # 当url已存在，则不需添加
+                return  False # 当url已存在，则不需添加
         
         self.redisdb.sadd(self.set_url_sign_citys, sign)
         self.start_urls.append(url) 
-        return
+        
+        return True
     
     def _md5(self, _val):
         m2 = hashlib.md5()

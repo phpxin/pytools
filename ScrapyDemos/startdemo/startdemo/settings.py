@@ -111,17 +111,19 @@ USER_AGENTS = [
 
 
 PROXIES = [
-  {'ip_port': '122.96.59.104:80', 'user_pass': ''},
-  {'ip_port': '119.188.94.145:80', 'user_pass': ''},
-  {'ip_port': '112.253.2.61:8080', 'user_pass': ''},
-  {'ip_port': '61.135.217.12:80', 'user_pass': ''},
-  {'ip_port': '61.135.217.17:80', 'user_pass': ''},
-  {'ip_port': '111.206.190.156:80', 'user_pass': ''},
+    {'ip_port': '122.96.59.104:80', 'user_pass': ''},
+    {'ip_port': '119.188.94.145:80', 'user_pass': ''},
+    {'ip_port': '112.253.2.61:8080', 'user_pass': ''},
+    {'ip_port': '61.135.217.12:80', 'user_pass': ''},
+    {'ip_port': '61.135.217.17:80', 'user_pass': ''},
+    {'ip_port': '111.206.190.156:80', 'user_pass': ''},
 ]
 
-COOKIES_ENABLED=False
+COOKIES_ENABLED = False
 
+DOWNLOAD_DELAY = 1
 
-DOWNLOAD_DELAY=1
-
-
+DOWNLOADER_MIDDLEWARES = {
+    'startdemo.middlewares.RandomUserAgent': 1,
+#     'startdemo.middlewares.ProxyMiddleware': 100,
+}
