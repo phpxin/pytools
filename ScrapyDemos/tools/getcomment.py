@@ -94,7 +94,7 @@ class getcomment(object):
         page = 1
         
         max_page = 5
-        req_time_limit = 3
+        req_time_limit = 10
         
         while run :
 
@@ -141,7 +141,7 @@ class getcomment(object):
                 print str(ue) 
                 if proxy != '' :
                     self.log('remove proxy ' + proxy)
-                    self.PROXIES.remove(self.PROXIES[proxy_index])
+                    proxy_list.remove(proxy_list[proxy_index])
                 else:
                     run = False
                     # 没有可用代理，可能全部被屏蔽，退出程序，等待管理员更换ip
@@ -243,11 +243,12 @@ class getcomment(object):
         m2.update(_val)
         return m2.hexdigest().upper()
     
-
+'''
 if len(sys.argv) < 2 :
     print 'usage : python getcomment.py Asialist'
     exit()
 
 #  执行程序
 getcomment(sys.argv[1])  
-
+'''
+getcomment('all')  
