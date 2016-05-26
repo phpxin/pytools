@@ -244,11 +244,10 @@ class getcomment(object):
         return m2.hexdigest().upper()
     
 
-# if len(sys.argv) < 2 :
-#     print 'usage : python getcomment.py Asialist'
-#     exit()
+if len(sys.argv) < 2 :
+    print 'usage : python getcomment.py Asialist'
+    exit()
 
 #  执行程序
-# getcomment(sys.argv[1])  
-getcomment('Asialist')  
+getcomment(sys.argv[1])  
 
