@@ -75,7 +75,7 @@ class QytravelsSpider(BaseSpider):
         
         # 查询大洲下国家
         xcursor = self.cnx.cursor()
-        xcursor.execute("select id,url,sign,continent,en,name from citys where continent='"+self.current_continent+"' and status=0") 
+        xcursor.execute("select id,url,sign,continent,en,name from citys where continent='"+self.current_continent+"' and status=0 and id=262 limit 1") 
         for (id,url,sign,continent,en,name) in xcursor:
             #self.start_urls.append(url.strip('/') + '/alltravel/')
             self.appendToUrls(url.strip('/') + '/alltravel/')
@@ -245,10 +245,15 @@ class QytravelsSpider(BaseSpider):
     def appendToUrls(self, url):
         
         self.log('added sub page ' + url)
-        
+
         sign = self._md5(url)
-        if self.redisdb.sismember(self.set_url_sign_citys, sign):
-            return  # 当url已存在，则不需添加
+        
+        if url.endswith('alltravel/') or  url.endswith('alltravel') :
+            # 主页需要分析分页
+            pass
+        else:
+            if self.redisdb.sismember(self.set_url_sign_citys, sign):
+                return  # 当url已存在，则不需添加
         
         self.redisdb.sadd(self.set_url_sign_citys, sign)
         self.start_urls.append(url) 
