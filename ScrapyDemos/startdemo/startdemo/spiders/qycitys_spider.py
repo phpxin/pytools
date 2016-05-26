@@ -9,7 +9,7 @@ import hashlib
 import redis
 import os
 from _codecs import decode
-
+from scrapy import Request
 import sys
 reload(sys)
 
@@ -94,9 +94,13 @@ class QycitysSpider(BaseSpider):
         
         # 有值 [u'/algeria/citylist-0-0-1/', u'/algeria/citylist-0-0-2/', u'/algeria/citylist-0-0-2/']
         # 无值 []
+        reqs = []
         if len(hrefs) > 0 :
             for href in hrefs :
-                self.appendToUrls(self.qy_host + href)
+                _url = self.qy_host + href
+                _flag = self.appendToUrls( _url )
+                if _flag :
+                    reqs.append(Request(_url, self.parse))
                 
         
         ''' 处理城市列表 '''
@@ -130,6 +134,7 @@ class QycitysSpider(BaseSpider):
         clist = []  # reset
         
         print referer + ' complete !'
+        return reqs
              
     def process_clist(self, clist):
         
@@ -187,11 +192,12 @@ class QycitysSpider(BaseSpider):
         
         sign = self._md5(url)
         if self.redisdb.sismember(self.set_url_sign_countrys, sign):
-            return  # 当url已存在，则不需添加
+            return False # 当url已存在，则不需添加
         
         self.redisdb.sadd(self.set_url_sign_countrys, sign)
         
-        self.start_urls.append(url) 
+        #self.start_urls.append(url) 
+        return True
     
     def _md5(self, _val):
         m2 = hashlib.md5()

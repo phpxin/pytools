@@ -78,8 +78,8 @@ class QytravelsSpider(BaseSpider):
         xcursor = self.cnx.cursor()
         xcursor.execute("select id,url,sign,continent,en,name from citys where continent='"+self.current_continent+"' and status=0 ") 
         for (id,url,sign,continent,en,name) in xcursor:
-            #self.start_urls.append(url.strip('/') + '/alltravel/')
-            self.appendToUrls(url.strip('/') + '/alltravel/')
+            self.start_urls.append(url.strip('/') + '/alltravel/')
+            #self.appendToUrls(url.strip('/') + '/alltravel/')
             pass
         xcursor.close()
         
@@ -257,15 +257,12 @@ class QytravelsSpider(BaseSpider):
 
         sign = self._md5(url)
         
-        if url.endswith('alltravel/') or  url.endswith('alltravel') :
-            # 主页需要分析分页
-            pass
-        else:
-            if self.redisdb.sismember(self.set_url_sign_citys, sign):
-                return  False # 当url已存在，则不需添加
+        
+        if self.redisdb.sismember(self.set_url_sign_citys, sign):
+            return  False # 当url已存在，则不需添加
         
         self.redisdb.sadd(self.set_url_sign_citys, sign)
-        self.start_urls.append(url) 
+        #self.start_urls.append(url) 
         
         return True
     
