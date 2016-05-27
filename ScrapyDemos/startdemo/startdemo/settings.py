@@ -124,6 +124,6 @@ COOKIES_ENABLED = False
 DOWNLOAD_DELAY = 1
 
 DOWNLOADER_MIDDLEWARES = {
-    'startdemo.middlewares.RandomUserAgent': 1,
+#    'startdemo.middlewares.RandomUserAgent': 1,
 #     'startdemo.middlewares.ProxyMiddleware': 100,
 }
