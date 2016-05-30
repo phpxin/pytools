@@ -115,6 +115,33 @@ def myParse(html):
     else:
         #print 'not'
         pass
+    
+    #type_src
+    rdict['type_src'] = ''
+    type_ele = bsobj.findAll("li", {"class":"rank"})
+    if len(type_ele) > 0 :
+        rdict['type_src'] = type_ele[0].get_text().strip()
+        pass
+    
+    #print rdict['type_src']
+    
+    #type
+    rdict['type'] = u''
+    if rdict['type_src'] != u'' :
+        if rdict['type_src'].find(u'景点观光') != -1 :
+            rdict['type'] = u'景点观光'
+        elif rdict['type_src'].find(u'美食') != -1 :
+            rdict['type'] = u'美食'
+        elif rdict['type_src'].find(u'购物') != -1 :
+            rdict['type'] = u'购物'
+        elif rdict['type_src'].find(u'休闲娱乐') != -1 :
+            rdict['type'] = u'休闲娱乐'
+        pass
+    
+    #print rdict['type']
+
+    #print rdict 
+    
     return rdict
 
 #sys.argv
@@ -145,6 +172,7 @@ def connect_mysql():
     cnx.cursor().execute("set names utf8")
 
 def flush_data(_datalist, _idlist):
+    
     global cnx
     
     print 'flush data is exec '
@@ -178,7 +206,7 @@ def flush_data(_datalist, _idlist):
 connect_mysql()
 
 xcur = cnx.cursor()
-xcur.execute("select id,name,filepath from travels where status=1 and poi_status=0 and continent='"+continent+"' order by id asc ") 
+xcur.execute("select id,name,filepath from travels where status=1 and poi_status=0 and continent='"+continent+"' order by id asc limit 1") 
 result = xcur.fetchall()
 #print result
 print 'total : ' , len(result) , 'row '
