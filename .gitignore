@@ -7,3 +7,5 @@ ScrapyDemos/startdemo/travel_htmls/*
 *.pyc
 ScrapyDemos/tools/logs/*
 ScrapyDemos/tools/comment_jsons/*
+ScrapyDemos/startdemo/*.tmp
+ScrapyDemos/startdemo/*.zip

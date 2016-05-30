@@ -189,7 +189,7 @@ def flush_data(_datalist, _idlist):
     xcursor = cnx.cursor()
     if len(_datalist) > 0 :
         _values = ",".join(_datalist)
-        xcursor.execute("insert into poi(`travel_id`,`detail`,`kvs`,`addtime`,`lon`,`lat`,`qy_pid`) values"+_values)
+        xcursor.execute("insert into poi(`travel_id`,`detail`,`kvs`,`addtime`,`lon`,`lat`,`qy_pid`,`type_src`,`type`) values"+_values)
         cnx.commit()
         pass
         
@@ -206,7 +206,7 @@ def flush_data(_datalist, _idlist):
 connect_mysql()
 
 xcur = cnx.cursor()
-xcur.execute("select id,name,filepath from travels where status=1 and poi_status=0 and continent='"+continent+"' order by id asc limit 1") 
+xcur.execute("select id,name,filepath from travels where status=1 and poi_status=0 and continent='"+continent+"' order by id asc ") 
 result = xcur.fetchall()
 #print result
 print 'total : ' , len(result) , 'row '
@@ -242,13 +242,15 @@ for (id,name,filepath) in result:
     _lon = result_dict['lon'].replace("'", "")
     _lat = result_dict['lat'].replace("'", "")
     _qy_pid = ('%d' %result_dict['qy_pid'])
+    _type_src = result_dict['type_src'].replace("'", "")
+    _type = result_dict['type'].replace("'", "")
     
     #print _kvs
     
     now = int(time.time())
     _addtime = ('%d' %now)
     
-    datalist.append("("+_travel_id+", '"+_detail+"', '"+_kvs+"', "+_addtime+", '"+_lon+"', '"+_lat+"', "+_qy_pid+")")
+    datalist.append("("+_travel_id+", '"+_detail+"', '"+_kvs+"', "+_addtime+", '"+_lon+"', '"+_lat+"', "+_qy_pid+", '"+_type_src+"', '"+_type+"')")
     idlist.append(_travel_id)
     
     for_index = for_index+1
