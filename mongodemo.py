@@ -18,7 +18,7 @@ if __name__ == '__main__':
     client = pymongo.MongoClient("127.0.0.1", 27017)
     db = client.csdn2
 
-    file_name = './line.txt'
+    file_name = '/home/public/pydemo/csdn.txt'
     fp = open(file_name)
     line = ''
     saveData = []
@@ -34,17 +34,28 @@ if __name__ == '__main__':
             break
         arr = line.split('#')
         
+        
+        if i<1300000 :
+            continue
+        
         target = {}
         
-        target['name'] = arr[0].strip()
-        target['nickname'] = arr[1].strip()
-        target['email'] = arr[2].strip()
+        try:
+        
+            target['name'] = arr[0].strip().decode("GBK").encode('utf-8')
+            target['nickname'] = arr[1].strip().decode("GBK").encode('utf-8')
+            target['email'] = arr[2].strip().decode("GBK").encode('utf-8')
+        
+        except UnicodeDecodeError:
+            
+            print 'decode error'
+            continue
         
         #print target
         saveData.append(target) 
         
         if i%100000 == 0 :
-            db.user.insert(saveData)
+            db.user.insert_many(saveData)
             print i , ' line is insert ' 
             saveData = []
         
@@ -58,7 +69,7 @@ if __name__ == '__main__':
         }) 
     '''
 
-    db.user.insert(saveData)
+    db.user.insert_many(saveData)
     print i , ' line is insert ' 
     saveData = []
     
