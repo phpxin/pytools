@@ -1,15 +1,16 @@
-# -*- coding: utf-8 -*-
+# -*- coding: GBK -*-
 import pcap
 import dpkt
 import re
 
 import sys
 reload(sys)
-sys.setdefaultencoding('utf-8')
+sys.setdefaultencoding('GBK')
 
 def main():
-    pc=pcap.pcap(name="eth1")                                             # æŠ“å– eth1
-    pc.setfilter('tcp port 80')                                                       # è¿‡æ»¤è¡¨è¾¾å¼ tcp port 80
+    pc=pcap.pcap(name="eth1")                                             # ×¥È¡ eth1
+    print pc
+    pc.setfilter('tcp port 80')                                                       # ¹ıÂË±í´ïÊ½ tcp port 80
  
     for p_time, p_data in pc:                                                      # 
         ret = main_pcap(p_time, p_data)
@@ -17,7 +18,9 @@ def main():
         if ret:
             print ret 
                
-def main_pcap(p_time, p_data): # è§£ç 
+def main_pcap(p_time, p_data): # ½âÂë
+        print p_time
+        print p_data
         out_format = "%s\t%s\t%s\t%s\t%s\tHTTP/%s"
         p = dpkt.ethernet.Ethernet(p_data) # 
         ret = None
@@ -30,23 +33,23 @@ def main_pcap(p_time, p_data): # è§£ç 
                     if tcp_data.dport==80:
                         if tcp_data.data:
                             try:
-                                h = dpkt.http.Request(tcp_data.data)# httpè§£ç 
+                                h = dpkt.http.Request(tcp_data.data)# http½âÂë
                                 pre = "^/.*$"
-                                if match(pre, h.uri):  # url é‡å†™
+                                if match(pre, h.uri):  # url ÖØĞ´
                                     http_headers = h.headers
                                     host = h.headers['host']
                                     url = "http://" + host + h.uri
                                 else:
                                     url = h.uri
         
-                                # datetime srcip dstip GET /index.htm HTTP/1.1 # è¾“å‡ºæ—¥å¿—æ ¼å¼
+                                # datetime srcip dstip GET /index.htm HTTP/1.1 # Êä³öÈÕÖ¾¸ñÊ½
                                 ret = out_format % (p_time, src_ip, dst_ip, h.method, url, h.version)
                             except Exception,e:
                                 print e.message
         
         return ret
 
-def hortor_pcap(p_time, p_data): # è§£ç 
+def hortor_pcap(p_time, p_data): # ½âÂë
         out_format = "%s\t%s\t%s\t%s\t%s\tHTTP/%s"
         p = dpkt.ethernet.Ethernet(p_data) # 
         ret = None
@@ -59,16 +62,16 @@ def hortor_pcap(p_time, p_data): # è§£ç 
                     if tcp_data.dport==80:
                         if tcp_data.data:
                             try:
-                                h = dpkt.http.Request(tcp_data.data)# httpè§£ç 
+                                h = dpkt.http.Request(tcp_data.data)# http½âÂë
                                 pre = "^/.*$"
-                                if match(pre, h.uri):  # url é‡å†™
+                                if match(pre, h.uri):  # url ÖØĞ´
                                     http_headers = h.headers
                                     host = h.headers['host']
                                     url = "http://" + host + h.uri
                                 else:
                                     url = h.uri
         
-                                # datetime srcip dstip GET /index.htm HTTP/1.1 # è¾“å‡ºæ—¥å¿—æ ¼å¼
+                                # datetime srcip dstip GET /index.htm HTTP/1.1 # Êä³öÈÕÖ¾¸ñÊ½
                                 if host == 'wx.hortor.net' :
                                     ret = out_format % (p_time, src_ip, dst_ip, h.method, url, h.version)
                                 if url.startswith("http://wx.hortor.net/gc/game-list") :
@@ -79,16 +82,16 @@ def hortor_pcap(p_time, p_data): # è§£ç 
                     if tcp_data.sport==80:
                         if tcp_data.data:
                             try:
-                                h = dpkt.http.Response(tcp_data.data)# httpè§£ç 
+                                h = dpkt.http.Response(tcp_data.data)# http½âÂë
                                 pre = "^/.*$"
-                                if match(pre, h.uri):  # url é‡å†™
+                                if match(pre, h.uri):  # url ÖØĞ´
                                     http_headers = h.headers
                                     host = h.headers['host']
                                     url = "http://" + host + h.uri
                                 else:
                                     url = h.uri
         
-                                # datetime srcip dstip GET /index.htm HTTP/1.1 # è¾“å‡ºæ—¥å¿—æ ¼å¼
+                                # datetime srcip dstip GET /index.htm HTTP/1.1 # Êä³öÈÕÖ¾¸ñÊ½
                                 if host == 'wx.hortor.net' :
                                     ret = out_format % (p_time, src_ip, dst_ip, h.method, url, h.version)
                                 if url.startswith("http://wx.hortor.net/gc/game-list") :
