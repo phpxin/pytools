@@ -8,7 +8,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 def main():
-    pc=pcap.pcap(name="eth1")                                             # 抓取 eth1
+    pc=pcap.pcap(name="eth2")                                             # 抓取 eth1
     pc.setfilter('tcp port 80')                                                       # 过滤表达式 tcp port 80
  
     for p_time, p_data in pc:                                                      # 
